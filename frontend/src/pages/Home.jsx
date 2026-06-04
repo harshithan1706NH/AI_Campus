@@ -1,15 +1,21 @@
+import { Link } from "react-router-dom";
+
 function Home() {
   return (
     <div>
       <h1>AI Smart Campus Issue Reporting System</h1>
 
       <p>
-        Report campus issues, track complaints, and help maintain the campus
-        efficiently.
+        Report campus issues, track complaints, and help maintain the campus efficiently.
       </p>
 
-      <button>Report Issue</button>
-      <button>Track Complaint</button>
+      <Link to="/login">
+        <button>Login</button>
+      </Link>
+
+      <Link to="/register">
+        <button>Register</button>
+      </Link>
     </div>
   );
 }
