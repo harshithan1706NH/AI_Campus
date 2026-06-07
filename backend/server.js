@@ -41,7 +41,18 @@ app.post("/api/issues", async (req, res) => {
 }
 });
 
+// Get all issues
+app.get("/api/issues", async (req, res) => {
+  try {
+    const issues = await Issue.find();
 
+    res.json(issues);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching issues"
+    });
+  }
+});
 const PORT = 5000;
 
 app.listen(PORT, () => {
