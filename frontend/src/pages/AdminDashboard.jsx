@@ -48,6 +48,18 @@ function AdminDashboard() {
           boxShadow: "0 2px 5px rgba(0,0,0,0.1)"
         }}
       >
+        {issue.imageUrl && (
+  <img
+    src={issue.imageUrl}
+    alt="issue"
+    style={{
+      width: "200px",
+      height: "auto",
+      borderRadius: "10px",
+      marginTop: "10px"
+    }}
+  />
+)}
         <h3>{issue.title}</h3>
 
         <p>{issue.description}</p>

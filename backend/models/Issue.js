@@ -4,6 +4,7 @@ const issueSchema = new mongoose.Schema({
   title: String,
 
   description: String,
+  imageUrl: String,
 
   status: {
     type: String,

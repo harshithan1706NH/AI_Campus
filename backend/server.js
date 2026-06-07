@@ -20,11 +20,12 @@ app.get("/", (req, res) => {
 // 🔥 STEP 5: THIS IS THE PART YOU ADD HERE
 app.post("/api/issues", async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, imageUrl } = req.body;
 
     const newIssue = new Issue({
       title,
-      description
+      description,
+      imageUrl
     });
 
     await newIssue.save();
