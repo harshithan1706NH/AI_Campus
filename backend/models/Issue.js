@@ -1,10 +1,30 @@
 const mongoose = require("mongoose");
 
 const issueSchema = new mongoose.Schema({
-  title: String,
+  title: {
+    type: String,
+    required: true
+  },
 
-  description: String,
-  imageUrl: String,
+  description: {
+    type: String,
+    required: true
+  },
+
+  imageUrl: {
+    type: String,
+    default: ""
+  },
+
+  category: {
+    type: String,
+    default: "General"
+  },
+
+  severity: {
+    type: String,
+    default: "Low"
+  },
 
   status: {
     type: String,
