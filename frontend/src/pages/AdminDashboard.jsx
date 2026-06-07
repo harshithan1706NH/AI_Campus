@@ -19,6 +19,19 @@ function AdminDashboard() {
       console.log(error);
     }
   };
+  const updateStatus = async (id, status) => {
+  try {
+    await axios.put(
+      `http://localhost:5000/api/issues/${id}`,
+      { status }
+    );
+
+    fetchIssues();
+
+  } catch (error) {
+    console.log(error);
+  }
+};
 
  return (
   <div style={{ padding: "20px" }}>
@@ -38,6 +51,20 @@ function AdminDashboard() {
         <h3>{issue.title}</h3>
 
         <p>{issue.description}</p>
+
+        <p>
+        <strong>Status:</strong> {issue.status || "Pending"}
+        </p>
+        <select
+  value={issue.status || "Pending"}
+  onChange={(e) =>
+    updateStatus(issue._id, e.target.value)
+  }
+>
+  <option value="Pending">Pending</option>
+  <option value="In Progress">In Progress</option>
+  <option value="Resolved">Resolved</option>
+</select>
 
         <small>
           {new Date(issue.createdAt).toLocaleString()}

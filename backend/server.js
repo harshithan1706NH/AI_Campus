@@ -53,6 +53,25 @@ app.get("/api/issues", async (req, res) => {
     });
   }
 });
+// Update issue status
+app.put("/api/issues/:id", async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const updatedIssue = await Issue.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    res.json(updatedIssue);
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error updating status"
+    });
+  }
+});
 const PORT = 5000;
 
 app.listen(PORT, () => {

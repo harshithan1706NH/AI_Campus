@@ -2,7 +2,14 @@ const mongoose = require("mongoose");
 
 const issueSchema = new mongoose.Schema({
   title: String,
+
   description: String,
+
+  status: {
+    type: String,
+    default: "Pending"
+  },
+
   createdAt: {
     type: Date,
     default: Date.now
