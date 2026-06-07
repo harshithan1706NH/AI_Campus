@@ -1,21 +1,21 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function Home() {
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    fetch("http://localhost:5000/")
+      .then((res) => res.text())
+      .then((data) => setMessage(data));
+  }, []);
+
   return (
     <div>
-      <h1>AI Smart Campus Issue Reporting System</h1>
+      <h1>AI Smart Campus</h1>
 
-      <p>
-        Report campus issues, track complaints, and help maintain the campus efficiently.
-      </p>
+      <p>Backend says:</p>
 
-      <Link to="/login">
-        <button>Login</button>
-      </Link>
-
-      <Link to="/register">
-        <button>Register</button>
-      </Link>
+      <h2>{message}</h2>
     </div>
   );
 }
