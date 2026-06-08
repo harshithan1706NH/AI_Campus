@@ -1,12 +1,14 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
-import ReportIssue from "./pages/ReportIssue";
-import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ReportIssue from "./pages/ReportIssue";
+import MyIssues from "./pages/MyIssues";
 import AdminDashboard from "./pages/AdminDashboard";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -14,12 +16,41 @@ function App() {
       <Navbar />
 
       <Routes>
-        <Route path="/report" element={<ReportIssue />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        
+        {/* PUBLIC */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* STUDENT */}
+        <Route
+          path="/report"
+          element={
+            <ProtectedRoute roleRequired="student">
+              <ReportIssue />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-issues"
+          element={
+            <ProtectedRoute roleRequired="student">
+              <MyIssues />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ADMIN */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute roleRequired="admin">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
       </Routes>
     </BrowserRouter>
   );

@@ -9,82 +9,66 @@ function AdminDashboard() {
   }, []);
 
   const fetchIssues = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/api/issues"
-      );
-
-      setIssues(response.data);
-    } catch (error) {
-      console.log(error);
-    }
+    const res = await axios.get("http://localhost:5000/api/issues");
+    setIssues(res.data);
   };
+
+  const stats = {
+    total: issues.length,
+    pending: issues.filter(i => i.status === "Pending").length,
+    progress: issues.filter(i => i.status === "In Progress").length,
+    resolved: issues.filter(i => i.status === "Resolved").length,
+  };
+
   const updateStatus = async (id, status) => {
-  try {
-    await axios.put(
-      `http://localhost:5000/api/issues/${id}`,
-      { status }
-    );
-
+    await axios.put(`http://localhost:5000/api/issues/${id}`, { status });
     fetchIssues();
+  };
 
-  } catch (error) {
-    console.log(error);
-  }
-};
+  return (
+    <div style={{ padding: 20 }}>
 
- return (
-  <div style={{ padding: "20px" }}>
-    <h1>Admin Dashboard</h1>
+      <h1>Admin Dashboard</h1>
 
-    {issues.map((issue) => (
-      <div
-        key={issue._id}
-        style={{
-          border: "1px solid #ccc",
-          padding: "15px",
-          marginBottom: "15px",
-          borderRadius: "10px",
-          boxShadow: "0 2px 5px rgba(0,0,0,0.1)"
-        }}
-      >
-        {issue.imageUrl && (
-  <img
-    src={issue.imageUrl}
-    alt="issue"
-    style={{
-      width: "200px",
-      height: "auto",
-      borderRadius: "10px",
-      marginTop: "10px"
-    }}
-  />
-)}
-        <h3>{issue.title}</h3>
-
-        <p>{issue.description}</p>
-
-        <p>
-        <strong>Status:</strong> {issue.status || "Pending"}
-        </p>
-        <select
-  value={issue.status || "Pending"}
-  onChange={(e) =>
-    updateStatus(issue._id, e.target.value)
-  }
->
-  <option value="Pending">Pending</option>
-  <option value="In Progress">In Progress</option>
-  <option value="Resolved">Resolved</option>
-</select>
-
-        <small>
-          {new Date(issue.createdAt).toLocaleString()}
-        </small>
+      {/* STATS */}
+      <div style={{ display: "flex", gap: 20 }}>
+        <div>Total: {stats.total}</div>
+        <div>Pending: {stats.pending}</div>
+        <div>In Progress: {stats.progress}</div>
+        <div>Resolved: {stats.resolved}</div>
       </div>
-    ))}
-  </div>
-);
+
+      {/* PIE CHART */}
+      <div style={{ marginTop: 20 }}>
+        <h3>Issue Distribution</h3>
+        <pre>
+          {JSON.stringify(stats, null, 2)}
+        </pre>
+      </div>
+
+      {/* ISSUES */}
+      {issues.map(issue => (
+        <div key={issue._id} style={{ border: "1px solid #ccc", margin: 10 }}>
+          
+          {issue.imageUrl && (
+            <img src={issue.imageUrl} width={200} />
+          )}
+
+          <h3>{issue.title}</h3>
+          <p>{issue.description}</p>
+
+          <select
+            value={issue.status}
+            onChange={(e) => updateStatus(issue._id, e.target.value)}
+          >
+            <option>Pending</option>
+            <option>In Progress</option>
+            <option>Resolved</option>
+          </select>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default AdminDashboard;

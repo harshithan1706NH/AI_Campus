@@ -1,21 +1,25 @@
-import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
-  const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    fetch("http://localhost:5000/")
-      .then((res) => res.text())
-      .then((data) => setMessage(data));
-  }, []);
+  const navigate = useNavigate();
 
   return (
-    <div>
+    <div style={{
+      height: "100vh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexDirection: "column",
+      gap: "20px"
+    }}>
+      
       <h1>AI Smart Campus</h1>
 
-      <p>Backend says:</p>
+      <div style={{ display: "flex", gap: "10px" }}>
+        <button onClick={() => navigate("/login")}>Login</button>
+        <button onClick={() => navigate("/register")}>Register</button>
+      </div>
 
-      <h2>{message}</h2>
     </div>
   );
 }
