@@ -1,36 +1,56 @@
-import { useEffect, useState } from "react";
-import { PieChart, Pie, Cell, Tooltip } from "recharts";
-import axios from "axios";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+} from "recharts";
 
-function Analytics() {
-  const [data, setData] = useState([]);
+function Analytics({ stats }) {
+  const data = [
+    {
+      name: "Pending",
+      value: stats.pending,
+    },
+    {
+      name: "In Progress",
+      value: stats.progress,
+    },
+    {
+      name: "Resolved",
+      value: stats.resolved,
+    },
+  ];
 
-  useEffect(() => {
-    axios.get("http://localhost:5000/api/issues/stats")
-      .then((res) => {
-        const stats = res.data;
-
-        setData([
-          { name: "Pending", value: stats.pending },
-          { name: "In Progress", value: stats.inProgress },
-          { name: "Resolved", value: stats.resolved },
-        ]);
-      });
-  }, []);
-
-  const COLORS = ["#FFBB28", "#0088FE", "#00C49F"];
+  const COLORS = [
+    "#facc15",
+    "#3b82f6",
+    "#22c55e",
+  ];
 
   return (
-    <div>
-      <h2>Analytics</h2>
+    <div className="bg-white p-6 rounded-xl shadow">
+      <h2 className="text-2xl font-bold mb-4">
+        Issue Analytics
+      </h2>
 
-      <PieChart width={300} height={300}>
-        <Pie data={data} dataKey="value" outerRadius={100}>
-          {data.map((_, index) => (
-            <Cell key={index} fill={COLORS[index]} />
+      <PieChart width={400} height={300}>
+        <Pie
+          data={data}
+          dataKey="value"
+          outerRadius={100}
+          label
+        >
+          {data.map((entry, index) => (
+            <Cell
+              key={index}
+              fill={COLORS[index]}
+            />
           ))}
         </Pie>
+
         <Tooltip />
+        <Legend />
       </PieChart>
     </div>
   );

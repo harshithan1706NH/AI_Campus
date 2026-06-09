@@ -31,6 +31,7 @@ function ReportIssue() {
 
     const userId = localStorage.getItem("userId");
     const studentId = localStorage.getItem("userId");
+    console.log("Student ID:", studentId);
     const response = await fetch("http://localhost:5000/api/issues", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

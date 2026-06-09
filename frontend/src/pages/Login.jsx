@@ -18,7 +18,10 @@ function Login() {
     localStorage.setItem("token", res.data.token);
     localStorage.setItem("role", res.data.role);
     localStorage.setItem("userId", res.data.userId);
-
+console.log(
+  "Stored User ID:",
+  res.data.userId
+);
     if (res.data.role === "admin") {
       navigate("/dashboard");
     } else {

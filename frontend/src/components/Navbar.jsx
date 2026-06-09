@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 function Navbar() {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
+
   const navigate = useNavigate();
 
   const logout = () => {
@@ -10,34 +11,49 @@ function Navbar() {
     navigate("/");
   };
 
-  // 🔥 NOT LOGGED IN → NO NAVBAR LINKS (HOME ONLY CENTER UI)
   if (!token) return null;
 
   return (
-    <nav style={{ padding: "10px", display: "flex", gap: "10px" }}>
-      
-      {role === "student" && (
-        <>
-          <button onClick={() => navigate("/report")}>
-            Report Issue
+    <nav className="bg-blue-600 text-white px-6 py-4 flex items-center">
+      <h1 className="font-bold text-xl">
+        AI Smart Campus
+      </h1>
+
+      <div className="flex gap-3 ml-6">
+        {role === "student" && (
+          <>
+            <button
+              onClick={() => navigate("/report")}
+              className="bg-white text-blue-600 px-4 py-2 rounded"
+            >
+              Report Issue
+            </button>
+
+            <button
+              onClick={() => navigate("/my-issues")}
+              className="bg-white text-blue-600 px-4 py-2 rounded"
+            >
+              My Issues
+            </button>
+          </>
+        )}
+
+        {role === "admin" && (
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="bg-white text-blue-600 px-4 py-2 rounded"
+          >
+            Dashboard
           </button>
+        )}
+      </div>
 
-          <button onClick={() => navigate("/my-issues")}>
-            My Issues
-          </button>
-        </>
-      )}
-
-      {role === "admin" && (
-        <button onClick={() => navigate("/dashboard")}>
-          Admin Dashboard
-        </button>
-      )}
-
-      <button onClick={logout} style={{ marginLeft: "auto" }}>
+      <button
+        onClick={logout}
+        className="ml-auto bg-red-500 px-4 py-2 rounded"
+      >
         Logout
       </button>
-
     </nav>
   );
 }

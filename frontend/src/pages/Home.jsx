@@ -4,22 +4,35 @@ function Home() {
   const navigate = useNavigate();
 
   return (
-    <div style={{
-      height: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      flexDirection: "column",
-      gap: "20px"
-    }}>
-      
-      <h1>AI Smart Campus</h1>
+    <div className="min-h-screen bg-gray-100 flex justify-center items-center">
+      <div className="bg-white p-10 rounded-xl shadow-lg text-center">
 
-      <div style={{ display: "flex", gap: "10px" }}>
-        <button onClick={() => navigate("/login")}>Login</button>
-        <button onClick={() => navigate("/register")}>Register</button>
+        <h1 className="text-4xl font-bold mb-4">
+          AI Smart Campus
+        </h1>
+
+        <p className="mb-6 text-gray-600">
+          Report and track campus issues
+          using AI-powered management.
+        </p>
+
+        <div className="flex gap-4 justify-center">
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-blue-600 text-white px-6 py-2 rounded"
+          >
+            Login
+          </button>
+
+          <button
+            onClick={() => navigate("/register")}
+            className="bg-green-600 text-white px-6 py-2 rounded"
+          >
+            Register
+          </button>
+        </div>
+
       </div>
-
     </div>
   );
 }
