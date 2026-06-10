@@ -4,43 +4,53 @@ const issueSchema = new mongoose.Schema({
   studentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true
+    required: true,
   },
 
   title: {
     type: String,
-    required: true
+    default: "",
+  },
+
+  summary: {
+    type: String,
+    default: "",
+  },
+
+  location: {
+    type: String,
+    default: "",
   },
 
   description: {
     type: String,
-    required: true
+    required: true,
   },
 
   imageUrl: {
     type: String,
-    default: ""
+    default: "",
   },
 
   category: {
     type: String,
-    default: "General"
+    default: "General",
   },
 
   severity: {
     type: String,
-    default: "Low"
+    default: "Low",
   },
 
   status: {
     type: String,
-    default: "Pending"
+    default: "Pending",
   },
 
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model("Issue", issueSchema);

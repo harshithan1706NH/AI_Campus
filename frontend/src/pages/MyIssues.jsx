@@ -61,7 +61,20 @@ function MyIssues() {
               {issue.title}
             </h3>
 
-            <p>{issue.description}</p>
+            <p>
+            <strong>Summary:</strong>{" "}
+            {issue.summary}
+          </p>
+
+          <p>
+            <strong>Location:</strong>{" "}
+            {issue.location}
+          </p>
+
+          <p>
+            <strong>Description:</strong>{" "}
+            {issue.description}
+          </p>
 
             <p>
               <strong>Status:</strong>{" "}

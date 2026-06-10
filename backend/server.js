@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const axios = require("axios");
 
 const connectDB = require("./db");
 const User = require("./models/User");
@@ -19,317 +20,365 @@ app.use(express.json());
 connectDB();
 
 const genAI = new GoogleGenerativeAI(
-process.env.GEMINI_API_KEY
+  process.env.GEMINI_API_KEY
 );
 
-// ================= AI =================
+// ================= GEMINI CLASSIFICATION =================
 
 const getAIAnalysis = async (text) => {
-try {
-const model = genAI.getGenerativeModel({
-model: "gemini-1.5-flash",
-});
+  try {
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+    });
 
+    const prompt = `
+Return ONLY valid JSON.
 
-const prompt = `
+{
+  "category":"Plumbing | Electrical | Cleanliness | Maintenance | General",
+  "severity":"Low | Medium | High"
+}
 
+Issue:
+${text}
+`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const raw = response.text();
+
+    return JSON.parse(
+      raw.replace(/```json|```/g, "").trim()
+    );
+
+  } catch (error) {
+    console.log("Gemini Error:", error.message);
+
+    return {
+      category: "General",
+      severity: "Low",
+    };
+  }
+};
+
+// ================= OLLAMA TITLE + SUMMARY =================
+const generateTitleSummary = async (
+  description
+) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:11434/api/generate",
+      {
+        model: "qwen2.5",
+        prompt: `
+You are a campus issue assistant.
 
 Return ONLY valid JSON.
 
 {
-"category":"Plumbing | Electrical | Cleanliness | Maintenance | General",
-"severity":"Low | Medium | High"
+  "title":"",
+  "summary":"",
+  "location":""
 }
 
-Issue: ${text}
-`;
+Rules:
 
+1. Generate a short title.
+2. Generate a one sentence summary.
+3. Extract the location if mentioned.
+4. If location is not mentioned return "Unknown".
 
-const result = await model.generateContent(prompt);
-const response = await result.response;
-const raw = response.text();
+Issue:
+${description}
 
-return JSON.parse(
-  raw.replace(/json|/g, "").trim()
-);
+ONLY RETURN JSON.
+`,
+        stream: false,
+      }
+    );
 
+    return JSON.parse(
+      response.data.response
+    );
 
-} catch (error) {
-console.log("AI Error:", error.message);
+  } catch (error) {
+    console.log(
+      "Ollama Error:",
+      error.message
+    );
 
-
-return {
-  category: "General",
-  severity: "Low",
+    return {
+      title: "Campus Issue",
+      summary: description,
+      location: "Unknown",
+    };
+  }
 };
-
-
-}
-};
-
 // ================= TEST =================
 
 app.get("/", (req, res) => {
-res.send("Backend Running");
+  res.send("Backend Running 🚀");
 });
 
 // ================= REGISTER =================
 
 app.post("/api/auth/register", async (req, res) => {
-try {
-const { name, email, password, role } =
-req.body;
+  try {
+    const { name, email, password, role } =
+      req.body;
 
+    const existingUser =
+      await User.findOne({
+        email,
+      });
 
-const existingUser = await User.findOne({
-  email,
-});
+    if (existingUser) {
+      return res.status(400).json({
+        message: "Email already exists",
+      });
+    }
 
-if (existingUser) {
-  return res.status(400).json({
-    message: "Email already exists",
-  });
-}
+    const hashedPassword =
+      await bcrypt.hash(password, 10);
 
-const hashedPassword =
-  await bcrypt.hash(password, 10);
+    const user = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+    });
 
-const user = new User({
-  name,
-  email,
-  password: hashedPassword,
-  role,
-});
+    await user.save();
 
-await user.save();
+    res.json({
+      message: "Registration Successful",
+    });
 
-res.json({
-  message: "Registration Successful",
-});
+  } catch (error) {
+    console.log(error);
 
-
-} catch (error) {
-console.log(error);
-
-res.status(500).json({
-  message: "Registration Failed",
-});
-
-
-}
+    res.status(500).json({
+      message: "Registration Failed",
+    });
+  }
 });
 
 // ================= LOGIN =================
 
 app.post("/api/auth/login", async (req, res) => {
-try {
-const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
+    const user = await User.findOne({
+      email,
+    });
 
-const user = await User.findOne({
-  email,
-});
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+      });
+    }
 
-if (!user) {
-  return res.status(400).json({
-    message: "User not found",
-  });
-}
+    const isMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
 
-const isMatch = await bcrypt.compare(
-  password,
-  user.password
-);
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Invalid password",
+      });
+    }
 
-if (!isMatch) {
-  return res.status(400).json({
-    message: "Invalid password",
-  });
-}
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+      },
+      "secretkey",
+      {
+        expiresIn: "1d",
+      }
+    );
 
-const token = jwt.sign(
-  {
-    id: user._id,
-    role: user.role,
-  },
-  "secretkey",
-  {
-    expiresIn: "1d",
+    res.json({
+      token,
+      role: user.role,
+      userId: user._id,
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Login Failed",
+    });
   }
-);
-
-res.json({
-  token,
-  role: user.role,
-  userId: user._id,
-});
-
-
-} catch (error) {
-console.log(error);
-
-
-res.status(500).json({
-  message: "Login Failed",
-});
-
-
-}
 });
 
 // ================= CREATE ISSUE =================
 
 app.post("/api/issues", async (req, res) => {
-try {
-const {
-title,
-description,
-imageUrl,
-studentId,
-} = req.body;
+  try {
+    const {
+      description,
+      imageUrl,
+      studentId,
+    } = req.body;
 
+    console.log(
+      "Creating issue for:",
+      studentId
+    );
 
-console.log(
-  "Creating issue for student:",
-  studentId
-);
+    // Gemini
+    const classification =
+      await getAIAnalysis(description);
 
-const aiResult =
-  await getAIAnalysis(description);
-
-const issue = new Issue({
+    // Ollama
+    const aiContent =
+      await generateTitleSummary(
+        description
+      );
+      const issue = new Issue({
   studentId,
-  title,
+
+  title: aiContent.title,
+
+  summary: aiContent.summary,
+
+  location: aiContent.location,
+
   description,
+
   imageUrl,
-  category: aiResult.category,
-  severity: aiResult.severity,
+
+  category:
+    classification.category,
+
+  severity:
+    classification.severity,
+
   status: "Pending",
 });
+    
 
-await issue.save();
+    await issue.save();
 
-res.json({
-  message: "Issue created successfully",
-  issue,
-});
+    res.json({
+      message:
+        "Issue created successfully",
+      issue,
+    });
 
+  } catch (error) {
+    console.log(error);
 
-} catch (error) {
-console.log(error);
-
-res.status(500).json({
-  message: "Issue creation failed",
-});
-
-
-}
+    res.status(500).json({
+      message: "Issue creation failed",
+    });
+  }
 });
 
 // ================= STUDENT ISSUES =================
 
 app.get(
-"/api/issues/student/:studentId",
-async (req, res) => {
-try {
-const issues = await Issue.find({
-studentId: req.params.studentId,
-});
+  "/api/issues/student/:studentId",
+  async (req, res) => {
+    try {
+      const issues = await Issue.find({
+        studentId: req.params.studentId,
+      });
 
+      res.json(issues);
 
-  res.json(issues);
-} catch (error) {
-  console.log(error);
-
-  res.status(500).json({
-    message: "Error fetching issues",
-  });
-}
-
-
-});
+    } catch (error) {
+      res.status(500).json({
+        message:
+          "Error fetching issues",
+      });
+    }
+  }
+);
 
 // ================= ALL ISSUES =================
 
 app.get("/api/issues", async (req, res) => {
-try {
-const issues = await Issue.find();
+  try {
+    const issues = await Issue.find();
 
+    res.json(issues);
 
-res.json(issues);
-
-
-} catch (error) {
-res.status(500).json({
-message: "Error fetching issues",
-});
-}
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Error fetching issues",
+    });
+  }
 });
 
 // ================= STATS =================
 
 app.get("/api/issues/stats", async (req, res) => {
-try {
-const pending =
-await Issue.countDocuments({
-status: "Pending",
-});
+  try {
+    const pending =
+      await Issue.countDocuments({
+        status: "Pending",
+      });
 
+    const inProgress =
+      await Issue.countDocuments({
+        status: "In Progress",
+      });
 
-const inProgress =
-  await Issue.countDocuments({
-    status: "In Progress",
-  });
+    const resolved =
+      await Issue.countDocuments({
+        status: "Resolved",
+      });
 
-const resolved =
-  await Issue.countDocuments({
-    status: "Resolved",
-  });
+    res.json({
+      pending,
+      inProgress,
+      resolved,
+    });
 
-res.json({
-  pending,
-  inProgress,
-  resolved,
-});
-
-
-} catch (error) {
-res.status(500).json({
-message: "Stats Error",
-});
-}
+  } catch (error) {
+    res.status(500).json({
+      message: "Stats Error",
+    });
+  }
 });
 
 // ================= UPDATE STATUS =================
 
 app.put("/api/issues/:id", async (req, res) => {
-try {
-const updatedIssue =
-await Issue.findByIdAndUpdate(
-req.params.id,
-{
-status: req.body.status,
-},
-{
-new: true,
-}
-);
+  try {
+    const updatedIssue =
+      await Issue.findByIdAndUpdate(
+        req.params.id,
+        {
+          status: req.body.status,
+        },
+        {
+          new: true,
+        }
+      );
 
+    res.json(updatedIssue);
 
-res.json(updatedIssue);
-
-
-} catch (error) {
-res.status(500).json({
-message: "Update Failed",
+  } catch (error) {
+    res.status(500).json({
+      message: "Update Failed",
+    });
+  }
 });
-}
-});
+
+// ================= SERVER =================
 
 const PORT = 5000;
 
 app.listen(PORT, () => {
-console.log(
-`Server running on port ${PORT}`
-);
+  console.log(
+    `Server running on port ${PORT}`
+  );
 });
