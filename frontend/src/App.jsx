@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import ReportIssue from "./pages/ReportIssue";
 import MyIssues from "./pages/MyIssues";
 import AdminDashboard from "./pages/AdminDashboard";
+import Chatbot from "./pages/Chatbot";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -31,7 +32,10 @@ function App() {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/chat"
+          element={<Chatbot />}
+        />
         <Route
           path="/my-issues"
           element={

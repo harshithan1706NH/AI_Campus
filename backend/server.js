@@ -28,7 +28,7 @@ const genAI = new GoogleGenerativeAI(
 const getAIAnalysis = async (text) => {
   try {
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.5-flash",
     });
 
     const prompt = `
@@ -114,6 +114,82 @@ ONLY RETURN JSON.
     };
   }
 };
+
+const getChatbotResponse = async (message) => {
+  try {
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+    });
+    const prompt = `
+You are the assistant for the Smart Campus Issue Reporting and Management System.
+
+SYSTEM FEATURES
+
+Student Features:
+
+* Register and login.
+* Report campus issues using a description.
+* Upload issue images.
+* Automatic title generation.
+* Automatic summary generation.
+* Automatic location extraction from descriptions.
+* View previously reported issues.
+* Track issue status.
+
+Issue Status:
+
+* Pending
+* In Progress
+* Resolved
+
+Admin Features:
+
+* View all reported issues.
+* View uploaded images.
+* View generated titles and summaries.
+* View extracted locations.
+* View issue categories.
+* View severity levels.
+* Update issue status.
+* View issue statistics and analytics.
+
+Rules:
+
+* Answer ONLY questions related to this system.
+* Never invent features.
+* If a feature does not exist, clearly say it is currently unavailable.
+* For unrelated questions, reply:
+  "Sorry, I can only assist with the Smart Campus Issue Reporting and Management System."
+
+User Question:
+${message}
+`;
+
+    
+
+    const result =
+      await model.generateContent(prompt);
+
+    const response =
+      await result.response;
+
+    return response.text();
+
+  } catch (error) {
+    console.log(error);
+
+   if (
+  error.status === 429 ||
+  error.status === 503
+) 
+{
+  return "The assistant is currently busy. Please try again in a few moments.";
+}
+
+return "Unable to respond right now.";
+  }
+};
+
 // ================= TEST =================
 
 app.get("/", (req, res) => {
@@ -215,6 +291,27 @@ app.post("/api/auth/login", async (req, res) => {
     });
   }
 });
+
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    const reply =
+      await getChatbotResponse(message);
+
+    res.json({
+      reply,
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Chatbot Error",
+    });
+  }
+});
+
 
 // ================= CREATE ISSUE =================
 
