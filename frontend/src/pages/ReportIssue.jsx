@@ -1,17 +1,11 @@
 import { useState } from "react";
+import FloatingChatbot from "./FloatingChatbot";
 
 function ReportIssue() {
-  const [description, setDescription] =
-    useState("");
-
-  const [image, setImage] =
-    useState(null);
-
-  const [message, setMessage] =
-    useState("");
-
-  const [loading, setLoading] =
-    useState(false);
+  const [description, setDescription] = useState("");
+  const [image, setImage] = useState(null);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,13 +18,8 @@ function ReportIssue() {
       // Upload image to Cloudinary
       if (image) {
         const formData = new FormData();
-
         formData.append("file", image);
-
-        formData.append(
-          "upload_preset",
-          "ai_campus_uploads"
-        );
+        formData.append("upload_preset", "ai_campus_uploads");
 
         const uploadRes = await fetch(
           "https://api.cloudinary.com/v1_1/dhhei2ult/image/upload",
@@ -40,23 +29,18 @@ function ReportIssue() {
           }
         );
 
-        const uploadData =
-          await uploadRes.json();
-
-        imageUrl =
-          uploadData.secure_url;
+        const uploadData = await uploadRes.json();
+        imageUrl = uploadData.secure_url;
       }
 
-      const userId =
-        localStorage.getItem("userId");
+      const userId = localStorage.getItem("userId");
 
       const response = await fetch(
         "http://localhost:5000/api/issues",
         {
           method: "POST",
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             description,
@@ -66,27 +50,23 @@ function ReportIssue() {
         }
       );
 
-      const result =
-        await response.json();
+      const result = await response.json();
 
       setMessage(result.message);
 
       setDescription("");
       setImage(null);
-
     } catch (error) {
       console.log(error);
-
-      setMessage(
-        "Failed to submit issue"
-      );
+      setMessage("Failed to submit issue");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center p-6">
+    <div className="min-h-screen bg-gray-100 flex justify-center p-6 relative">
+      
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-2xl">
 
         <h1 className="text-3xl font-bold mb-6 text-center">
@@ -97,30 +77,20 @@ function ReportIssue() {
           Describe the issue clearly and include the location.
         </p>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4"
-        >
+        <form onSubmit={handleSubmit} className="space-y-4">
+
           <textarea
             rows="6"
             placeholder="Describe the issue..."
             className="w-full border p-3 rounded-lg"
             value={description}
-            onChange={(e) =>
-              setDescription(
-                e.target.value
-              )
-            }
+            onChange={(e) => setDescription(e.target.value)}
             required
           />
 
           <input
             type="file"
-            onChange={(e) =>
-              setImage(
-                e.target.files[0]
-              )
-            }
+            onChange={(e) => setImage(e.target.files[0])}
             className="w-full border p-3 rounded-lg"
           />
 
@@ -129,10 +99,9 @@ function ReportIssue() {
             disabled={loading}
             className="w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700"
           >
-            {loading
-              ? "Processing with AI..."
-              : "Submit Issue"}
+            {loading ? "Processing with AI..." : "Submit Issue"}
           </button>
+
         </form>
 
         {message && (
@@ -140,7 +109,12 @@ function ReportIssue() {
             {message}
           </div>
         )}
+
       </div>
+
+      {/* 🤖 Floating chatbot ONLY for Report page */}
+      <FloatingChatbot />
+
     </div>
   );
 }

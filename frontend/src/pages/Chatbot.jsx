@@ -32,6 +32,7 @@ function Chatbot() {
         "http://localhost:5000/api/chat",
         {
           message: currentMessage,
+          role: localStorage.getItem("role"),
         }
       );
 

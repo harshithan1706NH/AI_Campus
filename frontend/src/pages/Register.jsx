@@ -7,11 +7,7 @@ function Register() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] =
-    useState("");
-
-  const [role, setRole] =
-    useState("student");
+  const [password, setPassword] = useState("");
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -23,13 +19,12 @@ function Register() {
           name,
           email,
           password,
-          role,
+          // ❌ NO ROLE SENT ANYMORE
         }
       );
 
       alert("Registration Successful");
       navigate("/login");
-
     } catch (error) {
       console.log(error);
       alert("Registration Failed");
@@ -38,25 +33,21 @@ function Register() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-
+        
         <h1 className="text-3xl font-bold text-center mb-6">
           Register
         </h1>
 
-        <form
-          onSubmit={handleRegister}
-          className="space-y-4"
-        >
+        <form onSubmit={handleRegister} className="space-y-4">
+
           <input
             type="text"
             placeholder="Name"
             className="w-full border p-3 rounded-lg"
             value={name}
-            onChange={(e) =>
-              setName(e.target.value)
-            }
+            onChange={(e) => setName(e.target.value)}
+            required
           />
 
           <input
@@ -64,9 +55,8 @@ function Register() {
             placeholder="Email"
             className="w-full border p-3 rounded-lg"
             value={email}
-            onChange={(e) =>
-              setEmail(e.target.value)
-            }
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
 
           <input
@@ -74,26 +64,11 @@ function Register() {
             placeholder="Password"
             className="w-full border p-3 rounded-lg"
             value={password}
-            onChange={(e) =>
-              setPassword(e.target.value)
-            }
+            onChange={(e) => setPassword(e.target.value)}
+            required
           />
 
-          <select
-            className="w-full border p-3 rounded-lg"
-            value={role}
-            onChange={(e) =>
-              setRole(e.target.value)
-            }
-          >
-            <option value="student">
-              Student
-            </option>
-
-            <option value="admin">
-              Admin
-            </option>
-          </select>
+          {/* ❌ ROLE DROPDOWN REMOVED */}
 
           <button
             type="submit"
@@ -101,6 +76,7 @@ function Register() {
           >
             Register
           </button>
+
         </form>
       </div>
     </div>
