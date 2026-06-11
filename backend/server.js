@@ -88,6 +88,38 @@ REPORT ISSUE FLOW:
     return "Unable to respond right now.";
   }
 };
+const generateIssueDetails = async (description) => {
+  try {
+    const prompt = `
+You are an AI assistant for a Campus Issue Reporting System.
+
+Extract the following information from the issue description.
+
+Return ONLY in this format:
+
+Title: ...
+Summary: ...
+Location: ...
+
+Issue Description:
+${description}
+`;
+
+    const response = await axios.post(
+      "http://localhost:11434/api/generate",
+      {
+        model: "qwen2.5",
+        prompt,
+        stream: false,
+      }
+    );
+
+    return response.data.response;
+  } catch (error) {
+    console.log("Ollama Error:", error.message);
+    return null;
+  }
+};
 
 /* =========================
    TEST ROUTE
@@ -194,10 +226,59 @@ app.post("/api/issues", async (req, res) => {
   try {
     const { description, imageUrl, studentId } = req.body;
 
+    const aiText =
+      await generateIssueDetails(description);
+      const mlResponse = await axios.post(
+  "http://127.0.0.1:8000/predict",
+  {
+    imageUrl,
+    description,
+  }
+);
+
+const category =
+  mlResponse.data.category;
+
+const severity =
+  mlResponse.data.severity;
+
+    console.log("Ollama Response:");
+    console.log(aiText);
+
+    let title = "";
+    let summary = "";
+    let location = "";
+
+    if (aiText) {
+      const lines = aiText.split("\n");
+
+      lines.forEach((line) => {
+        if (line.startsWith("Title:")) {
+          title = line.replace("Title:", "").trim();
+        }
+
+        if (line.startsWith("Summary:")) {
+          summary = line.replace("Summary:", "").trim();
+        }
+
+        if (line.startsWith("Location:")) {
+          location = line.replace("Location:", "").trim();
+        }
+      });
+    }
+
     const issue = new Issue({
       studentId,
       description,
       imageUrl,
+
+      title,
+      summary,
+      location,
+      
+      category,
+      severity,
+
       status: "Pending",
     });
 
@@ -209,7 +290,10 @@ app.post("/api/issues", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Issue creation failed" });
+
+    res.status(500).json({
+      message: "Issue creation failed",
+    });
   }
 });
 

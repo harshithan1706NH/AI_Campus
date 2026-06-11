@@ -1,0 +1,82 @@
+image,text,category,severity
+fan1.jpg,Ceiling fan not rotating in classroom,Electrical,Medium
+fan2.jpg,Ceiling fan making loud noise,Electrical,Low
+fan3.jpg,Fan stopped working completely,Electrical,Medium
+light1.jpg,Tube light flickering frequently,Electrical,Low
+light2.jpg,Classroom light not functioning,Electrical,Medium
+socket1.jpg,Damaged electrical socket near desk,Electrical,Medium
+socket2.jpg,Damaged electrical socket on wall,Electrical,Medium
+switch1.jpg,Broken switch board in classroom,Electrical,Medium
+switch2.jpg,Broken switch board on wall,Electrical,Medium
+wire1.jpg,Exposed electrical wire in corridor,Electrical,High
+wire2.jpg,Exposed electrical wire from switch board,Electrical,High
+spark1.jpg,Sparking switch near laboratory,Electrical,High
+spark2.jpg,Sparking switch on wall,Electrical,High
+panel1.jpg,Electrical panel overheating and on fire in building,Electrical,High
+panel2.jpg,Electrical panel overheating and burnt in building,Electrical,High
+
+wifi1.jpg,WiFi unavailable in classroom,Network,Medium
+wifi2.jpg,Internet not working in lab,Network,Medium
+wifi3.jpg,Router offline,Network,Medium
+router1.jpg,Router showing red warning light,Network,High
+router2.jpg,Router overheating,Network,High
+cable1.jpg,Network cable disconnected,Network,Medium
+cable2.jpg,Damaged ethernet cable,Network,Medium
+server.jpg,Campus network down completely,Network,High
+wifi4.jpg,Weak WiFi signal in building,Network,Low
+wifi5.jpg,Frequent internet disconnections,Network,Low
+
+leak1.jpg,Water leaking from classroom ceiling,Water & Plumbing,High
+leak2.jpg,Continuous water leakage near corridor,Water & Plumbing,Medium
+tap1.jpg,Broken water tap in washroom,Water & Plumbing,Medium
+tap2.jpg,Tap left dripping continuously,Water & Plumbing,Low
+drain1.jpg,Blocked drainage near hostel,Water & Plumbing,High
+drain2.jpg,Water accumulation due to clogged drain,Water & Plumbing,Medium
+pipe1.jpg,Burst water pipe near academic block,Water & Plumbing,High
+pipe2.jpg,Pipe leakage in washroom area,Water & Plumbing,Medium
+tank1.jpg,Overhead water tank overflowing,Water & Plumbing,Medium
+basin1.jpg,Wash basin leaking water continuously,Water & Plumbing,Low
+
+clean1.jpg,Classroom floor covered with litter,Cleanliness,Low
+clean2.jpg,Overflowing dustbin near academic block,Cleanliness,Medium
+clean3.jpg,Garbage accumulated near hostel entrance,Cleanliness,Medium
+clean4.jpg,Dirty washroom requiring cleaning,Cleanliness,Medium
+clean5.jpg,Food waste scattered near canteen,Cleanliness,Low
+clean6.jpg,Unclean corridor with trash,Cleanliness,Low
+clean7.jpg,Dust and debris accumulated in classroom,Cleanliness,Low
+clean8.jpg,Waste dumped near campus garden,Cleanliness,Medium
+clean9.jpg,Foul smelling garbage pile near building,Cleanliness,High
+clean10.jpg,Unsanitary washroom condition affecting students,Cleanliness,High
+
+infra1.jpg,Large pothole near campus parking area,Infrastructure,Medium
+infra2.jpg,Damaged road surface near main gate,Infrastructure,Medium
+infra3.jpg,Crack visible on classroom wall,Infrastructure,Medium
+infra4.jpg,Severe wall damage in academic block,Infrastructure,High
+infra5.jpg,Broken pavement causing walking difficulty,Infrastructure,Medium
+infra6.jpg,Ceiling crack observed in classroom,Infrastructure,High
+infra7.jpg,Damaged staircase posing safety risk,Infrastructure,High
+infra8.jpg,Uneven pathway near hostel building,Infrastructure,Low
+infra9.jpg,Broken campus signboard,Infrastructure,Low
+infra10.jpg,Structural damage on glass window,Infrastructure,High
+infra11.jpg,Broken window,Infrastructure,High
+
+furn1.jpg,Broken chair in classroom,Furniture & Equipment,Low
+furn2.jpg,Damaged desk requiring repair,Furniture & Equipment,Low
+furn3.jpg,Broken classroom bench,Furniture & Equipment,Medium
+furn4.jpg,Projector not functioning during lecture,Furniture & Equipment,Medium
+furn5.jpg,Computer system not working in lab,Furniture & Equipment,Medium
+furn6.jpg,Damaged laboratory equipment,Furniture & Equipment,High
+furn7.jpg,Whiteboard damaged and unusable,Furniture & Equipment,Low
+furn8.jpg,Broken cupboard in department office,Furniture & Equipment,Low
+furn9.jpg,Multiple classroom chairs damaged,Furniture & Equipment,Medium
+furn10.jpg,Critical lab equipment failure affecting practical sessions,Furniture & Equipment,High
+safe1.jpg,Snake spotted near campus garden,Safety & Security,High
+safe2.jpg,Stray dog roaming near hostel,Safety & Security,Medium
+safe3.jpg,Broken gate allowing unrestricted access,Safety & Security,High
+safe4.jpg,Fire extinguisher missing from corridor,Safety & Security,High
+safe5.jpg,Emergency exit blocked by furniture,Safety & Security,High
+safe6.jpg,Unauthorized person entering restricted area,Safety & Security,High
+safe7.jpg,Poor lighting near hostel pathway,Safety & Security,Medium
+safe8.jpg,Damaged security fence near campus boundary,Safety & Security,Medium
+safe9.jpg,Suspicious unattended bag found in building,Safety & Security,High
+safe10.jpg,Unsafe open manhole near walkway,Safety & Security,High
