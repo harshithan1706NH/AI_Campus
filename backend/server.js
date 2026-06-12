@@ -95,7 +95,7 @@ You are an AI assistant for a Campus Issue Reporting System.
 
 Extract the following information from the issue description.
 
-Return ONLY in this format:
+Return ONLY in this exact format:
 
 Title: ...
 Summary: ...
@@ -106,17 +106,34 @@ ${description}
 `;
 
     const response = await axios.post(
-      "http://localhost:11434/api/generate",
+      "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "qwen2.5",
-        prompt,
-        stream: false,
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You extract issue details and return only the requested format."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json"
+        }
       }
     );
 
-    return response.data.response;
+    return response.data.choices[0].message.content;
+
   } catch (error) {
-    console.log("Ollama Error:", error.message);
+    console.log("Groq Issue Extraction Error:", error.message);
     return null;
   }
 };
@@ -242,7 +259,7 @@ const category =
 const severity =
   mlResponse.data.severity;
 
-    console.log("Ollama Response:");
+    console.log("Groq Response:");
     console.log(aiText);
 
     let title = "";
