@@ -42,9 +42,11 @@ severity_encoder = joblib.load(
 
 print("Models Ready!")
 
+
 class IssueRequest(BaseModel):
     imageUrl: str
     description: str
+
 
 @app.get("/")
 def home():
@@ -52,47 +54,76 @@ def home():
         "message": "ML Service Running"
     }
 
+
 @app.post("/predict")
 def predict(data: IssueRequest):
 
-    response = requests.get(data.imageUrl)
+    try:
+        print("================================")
+        print("IMAGE URL:", data.imageUrl)
 
-    image = Image.open(
-        BytesIO(response.content)
-    ).convert("RGB")
+        response = requests.get(
+            data.imageUrl,
+            timeout=30
+        )
 
-    inputs = processor(
-        text=[data.description],
-        images=image,
-        return_tensors="pt",
-        padding=True
-    )
+        print("STATUS:", response.status_code)
 
-    with torch.no_grad():
-        outputs = clip_model(**inputs)
+        print(
+            "CONTENT TYPE:",
+            response.headers.get("Content-Type")
+        )
 
-    image_emb = outputs.image_embeds
-    text_emb = outputs.text_embeds
+        print(
+            "CONTENT LENGTH:",
+            len(response.content)
+        )
 
-    vector = torch.cat(
-        (image_emb, text_emb),
-        dim=1
-    )
+        response.raise_for_status()
 
-    vector = vector.numpy()
+        image = Image.open(
+            BytesIO(response.content)
+        ).convert("RGB")
 
-    cat_pred = category_model.predict(vector)
-    sev_pred = severity_model.predict(vector)
+        inputs = processor(
+            text=[data.description],
+            images=image,
+            return_tensors="pt",
+            padding=True
+        )
 
-    category = category_encoder.inverse_transform(
-        cat_pred
-    )[0]
+        with torch.no_grad():
+            outputs = clip_model(**inputs)
 
-    severity = severity_encoder.inverse_transform(
-        sev_pred
-    )[0]
+        image_emb = outputs.image_embeds
+        text_emb = outputs.text_embeds
 
-    return {
-        "category": category,
-        "severity": severity
-    }
+        vector = torch.cat(
+            (image_emb, text_emb),
+            dim=1
+        )
+
+        vector = vector.numpy()
+
+        cat_pred = category_model.predict(vector)
+        sev_pred = severity_model.predict(vector)
+
+        category = category_encoder.inverse_transform(
+            cat_pred
+        )[0]
+
+        severity = severity_encoder.inverse_transform(
+            sev_pred
+        )[0]
+
+        return {
+            "category": category,
+            "severity": severity
+        }
+
+    except Exception as e:
+        print("ERROR:", str(e))
+
+        return {
+            "error": str(e)
+        }
