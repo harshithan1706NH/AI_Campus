@@ -21,7 +21,7 @@ export default function FloatingChatbot() {
     setMessage("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/chat", {
+      const res = await axios.post("https://ai-campus-backend-ivxw.onrender.com/api/chat", {
         message: current,
         role: localStorage.getItem("role"),
       });

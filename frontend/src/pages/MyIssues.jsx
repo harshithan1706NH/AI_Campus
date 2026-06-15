@@ -15,7 +15,7 @@ function MyIssues() {
         localStorage.getItem("userId");
 
       const res = await axios.get(
-        `http://localhost:5000/api/issues/student/${userId}`
+        `https://ai-campus-backend-ivxw.onrender.com/api/issues/student/${userId}`
       );
 
       setIssues(res.data);

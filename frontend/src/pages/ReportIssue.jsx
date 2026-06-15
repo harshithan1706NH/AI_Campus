@@ -36,7 +36,7 @@ function ReportIssue() {
       const userId = localStorage.getItem("userId");
 
       const response = await fetch(
-        "http://localhost:5000/api/issues",
+        "https://ai-campus-backend-ivxw.onrender.com/api/issues",
         {
           method: "POST",
           headers: {

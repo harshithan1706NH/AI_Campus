@@ -29,7 +29,7 @@ function Chatbot() {
       setLoading(true);
 
       const res = await axios.post(
-        "http://localhost:5000/api/chat",
+        "https://ai-campus-backend-ivxw.onrender.com/api/chat",
         {
           message: currentMessage,
           role: localStorage.getItem("role"),
