@@ -246,7 +246,7 @@ app.post("/api/issues", async (req, res) => {
     const aiText =
       await generateIssueDetails(description);
       const mlResponse = await axios.post(
-  "http://127.0.0.1:8000/predict",
+  "https://harshi17-ai-campus-ml.hf.space/predict",
   {
     imageUrl,
     description,
