@@ -3,7 +3,7 @@
 An AI-powered full-stack web application that allows students to report campus issues using image + text input. The system automatically classifies the issue type and predicts severity using a machine learning model and routes it to an admin dashboard for resolution tracking.
 
 # Live Links
-https://your-vercel-link.vercel.app  
+https://ai-campus-lk9yu8oi5-harshitha-s-projects19.vercel.app/ 
 
 # Features
 
